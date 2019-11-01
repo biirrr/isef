@@ -1,3 +1,3 @@
 # IIR Study Exchange Format (ISEF)
 
-The ISEF is a data-exchange format design to support exchanging parts of or complete IIR (Interactive Information Retrieval) studies.
+The ISEF is a data-exchange format design to support exchanging parts of or complete IIR (Interactive Information Retrieval) studies. Full details can be found at [https://biirrr.github.io/isef](https://biirrr.github.io/isef).
