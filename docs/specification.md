@@ -26,7 +26,7 @@ The ISEF is split into core and optional parts. Conforming implementations **MUS
 
 # Data-Format
 
-The ISEF uses [JSON:API](https://jsonapi.org) as its data-format. In particular it uses the compound JSON:API document structure to store all required data in a single file, without requiring access to additional, external resources. As a result an ISEF document **MUST** also conform to the rules specified in the JSON:API specification.
+The ISEF uses [JSON:API](https://jsonapi.org) as its data-format. In particular it uses the compound JSON:API document structure to store all required data in a single file, without requiring access to additional, external resources. An ISEF document **MUST** also conform to the rules specified in the JSON:API specification.
 
 # Data-Types
 
@@ -42,6 +42,9 @@ The ``Question`` object **MUST** have the following members:
 * ``type``: ``"Question"``.
 * ``links``: A single [links object](#links)
 * ``attributes``: A single [question attributes object](#question-attributes).
+
+The ``Question`` object **MAY** also have the following member:
+
 * ``relationships``: A single [question relationships object](#question-relationships).
 
 The ``Question`` implements an inheritance hierarchy, which includes a set of 9 [standard questions](#standard_questions) that **MUST** be implemented. The inheritance is important for the [question attributes object](#question-attributes), as attributes are inherited from all ancestor ``Questions``.
@@ -103,11 +106,252 @@ The values for each key in the question attributes **MUST** fall into one of the
 * ``{user:singleValue}``: The value for this attribute **MUST** be acquired from the user setting up a study.
 * ``{user:multipleValues}``: The list of values for this attribute **MUST** be acquired from the user setting up a study.
 * ``{user:multilineText}``: The multi-line text value for this attribute **MUST** be acquired from the user setting up a study.
-* other values: A constant value that **MUST** be used as specified.
+* other values: To be treated as a constant value that **MUST** be used as specified.
 
 ### Question Relationships
 
+The question relationships object **MAY** contain the following key:
+
+* ``parent``: A resource linkage object [as specified in JSON:API](https://jsonapi.org/format/#document-resource-object-linkage). This **MUST** include the ``data`` key to identify the linked object in the included [resource objects](https://jsonapi.org/format/#document-resource-objects). The type of the linked object **MUST** be another ``Question``. If a ``parent`` ``Question`` is provided, then any properties and relationships specified in the parent ``Question`` are inherited, but **MAY** be overriden by specifying that attribute. The exception is the ``version`` key, which **MUST** be provided for each ``Question``.
+
 ### Standard Questions
+
+The ISEF provides the following eight base questions which **MUST** be supported:
+
+* [ISEFQuestion](#isefquestion)
+* [ISEFDisplay](#isefdisplay)
+* [ISEFSingleLineInput](#isefsinglelineinput)
+* [ISEFMuliLineInput](#isefmultilineinput)
+* [ISEFSingleChoice](#isefsinglechoice)
+* [ISEFMultiChoice](#isefmultichoice)
+* [ISEFHidden](#isefhidden)
+* [ISEFSingleChoiceGrid](#isefsinglechoicegrid)
+* [ISEFMultiChoiceGrid](#isefmultichoicegrid)
+
+#### ISEFQuestion
+
+The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Questions`` **MUST** inherit.
+
+```
+{
+  "id": "ISEFQuestion",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_question.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "name": "{user:singleValue}",
+    "title": "{user:singleValue}"
+  }
+}
+```
+
+#### ISEFDisplay
+
+```
+{
+  "id": "ISEFDisplay",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_display.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "name": null,
+    "title": null,
+    "content": "{user:multilineText}",
+    "format": "{user:singleValue}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+#### ISEFSingleLineInput
+
+```
+{
+  "id": "ISEFSingleLineInput",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_single_line_input.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "validation": "{user:singleValue}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+#### ISEFMultiLineInput
+
+```
+{
+  "id": "ISEFMultiLineInput",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_multi_line_input.json"
+  },
+  "attributes": {
+    "version": "0.1"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+#### ISEFSingleChoice
+
+```
+{
+  "id": "ISEFSingleChoice",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_single_choice.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "values": "{user:multipleValue}",
+    "labels": "{user:multipleValues}",
+    "display": "{user:singleValue}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+#### ISEFMultiChoice
+
+```
+{
+  "id": "ISEFMultiChoice",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_multi_choice.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "values": "{user:multipleValues}",
+    "labels": "{user:multipleValues}",
+    "display": "{user:singleValue}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+#### ISEFHidden
+
+```
+{
+  "id": "ISEFSingleChoice",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_hidden.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "title": null,
+    "value": "{user:singleValue}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+
+#### ISEFSingleChoiceGrid
+
+```
+{
+  "id": "ISEFSingleChoiceGrid",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_single_choice_grid.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "column_values": "{user:multipleValues}",
+    "column_labels": "{user:multipleValues}",
+    "row_values": "{user:multipleValues}",
+    "row_labels": "{user:multipleValues}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
+
+#### ISEFMultiChoiceGrid
+
+```
+{
+  "id": "ISEFMultiChoiceGrid",
+  "type": "Question",
+  "links": {
+    "self": "https://biirrr.github.io/isef/specification/questions/isef_multi_choice_grid.json"
+  },
+  "attributes": {
+    "version": "0.1",
+    "column_values": "{user:multipleValues}",
+    "column_labels": "{user:multipleValues}",
+    "row_values": "{user:multipleValues}",
+    "row_labels": "{user:multipleValues}"
+  },
+  "relationships": {
+    "parent": {
+      "data": {
+        "type": "Question",
+        "id": "ISEFQuestion"
+      }
+    }
+  }
+}
+```
 
 ## Page
 
