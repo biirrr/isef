@@ -6,13 +6,13 @@ permalink: /specification/
 
 # Status
 
-This page presents the latest published version of ISEF, which currently is **0.1.0-alpha**. The specification uses [semantic versioning](https://semver.org/) to clearly signal any breaking changes. The specification is still in an early alpha stage and is likely to change before the initial 1.0 release.
+This page presents the latest published version of USEF, which currently is **0.1.0-alpha**. The specification uses [semantic versioning](https://semver.org/) to clearly signal any breaking changes. The specification is still in an early alpha stage and is likely to change before the initial 1.0 release.
 
-If you catch an error in the specification’s text, or if you want to contribute to evolving the specification, or if you write an implementation, please let us know by opening an issue or pull request at our [GitHub repository](https://github.com/biirrr/isef).
+If you catch an error in the specification’s text, or if you want to contribute to evolving the specification, or if you write an implementation, please let us know by opening an issue or pull request at our [GitHub repository](https://github.com/biirrr/USEF).
 
 # Introduction
 
-The IIR Study Exchange Format (ISEF) is a specification for the exchange of parts of or complete IIR Studies. In particular it focuses on those aspects that gather self-reported responses from study participants.
+The User Study Exchange Format (USEF) is a specification for the exchange of parts of or complete User Studies. In particular it focuses on those aspects that gather self-reported responses from study participants.
 
 It defines both the core data-types to be used and generic instances for some of these data-types.
 
@@ -22,19 +22,19 @@ The key words “**MUST**”, “**MUST** NOT”, “REQUIRED”, “SHALL”, �
 
 # Core and Optional
 
-The ISEF is split into core and optional parts. Conforming implementations **MUST** implement all core parts of the specification and MAY implement all optional parts. Conforming implementations **MUST** be able to interoperate with other implementations that do or do not implement the optional parts.
+The USEF is split into core and optional parts. Conforming implementations **MUST** implement all core parts of the specification and MAY implement all optional parts. Conforming implementations **MUST** be able to interoperate with other implementations that do or do not implement the optional parts.
 
 # Data-Format
 
-The ISEF uses [JSON:API](https://jsonapi.org) as its data-format. In particular it uses the compound JSON:API document structure to store all required data in a single file, without requiring access to additional, external resources. An ISEF document **MUST** also conform to the rules specified in the JSON:API specification.
+The USEF uses [JSON:API](https://jsonapi.org) as its data-format. In particular it uses the compound JSON:API document structure to store all required data in a single file, without requiring access to additional, external resources. An USEF document **MUST** also conform to the rules specified in the JSON:API specification.
 
 # Data-Types
 
-The ISEF consists of one core and four optional data-types. The ``Question`` is the only core data-type and represents both generic questions (single input, multiple choice, ...) and specific questions (gender, age, education, ...) and **MUST** be implemented by all conforming implementations. The three optional data-types are the ``Page``, representing a collection of ``Questions``, the ``Study``, representing a collection ``Pages``, and the ``Transition``, representing the transitions between ``Pages``.
+The USEF consists of one core and four optional data-types. The ``Question`` is the only core data-type and represents both generic questions (single input, multiple choice, ...) and specific questions (gender, age, education, ...) and **MUST** be implemented by all conforming implementations. The three optional data-types are the ``Page``, representing a collection of ``Questions``, the ``Study``, representing a collection ``Pages``, and the ``Transition``, representing the transitions between ``Pages``.
 
 ## Question
 
-The ``Question`` is the primary building block of the ISEF and the only data-type that is core and **MUST** thus be implemented by all conforming implementations. The ``Question`` is used to represent both generic questions (single input, multiple choice, ...), where the researcher using the ``Question`` must provide further details before it can be shown to study participants, and also specific questions (gender, age, education, ...) that can be re-used as they are.
+The ``Question`` is the primary building block of the USEF and the only data-type that is core and **MUST** thus be implemented by all conforming implementations. The ``Question`` is used to represent both generic questions (single input, multiple choice, ...), where the researcher using the ``Question`` must provide further details before it can be shown to study participants, and also specific questions (gender, age, education, ...) that can be re-used as they are.
 
 The ``Question`` object **MUST** have the following members:
 
@@ -86,7 +86,7 @@ An example question would look like this:
     "parent": {
       "data": {
         "type": "Question",
-        "id": "isefSingleChoice"
+        "id": "USEFSingleChoice"
       }
     }
   }
@@ -116,28 +116,28 @@ The question relationships object **MAY** contain the following key:
 
 ### Standard Questions
 
-The ISEF provides the following eight base questions which **MUST** be supported:
+The USEF provides the following eight base questions which **MUST** be supported:
 
-* [ISEFQuestion](#isefquestion)
-* [ISEFDisplay](#isefdisplay)
-* [ISEFSingleLineInput](#isefsinglelineinput)
-* [ISEFMuliLineInput](#isefmultilineinput)
-* [ISEFSingleChoice](#isefsinglechoice)
-* [ISEFMultiChoice](#isefmultichoice)
-* [ISEFHidden](#isefhidden)
-* [ISEFSingleChoiceGrid](#isefsinglechoicegrid)
-* [ISEFMultiChoiceGrid](#isefmultichoicegrid)
+* [USEFQuestion](#USEFquestion)
+* [USEFDisplay](#USEFdisplay)
+* [USEFSingleLineInput](#USEFsinglelineinput)
+* [USEFMuliLineInput](#USEFmultilineinput)
+* [USEFSingleChoice](#USEFsinglechoice)
+* [USEFMultiChoice](#USEFmultichoice)
+* [USEFHidden](#USEFhidden)
+* [USEFSingleChoiceGrid](#USEFsinglechoicegrid)
+* [USEFMultiChoiceGrid](#USEFmultichoicegrid)
 
-#### ISEFQuestion
+#### USEFQuestion
 
-The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Questions`` **MUST** inherit.
+The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Questions`` **MUST** inherit.
 
 ```
 {
-  "id": "ISEFQuestion",
+  "id": "USEFQuestion",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_question.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_question.json"
   },
   "attributes": {
     "version": "0.1",
@@ -147,14 +147,14 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 }
 ```
 
-#### ISEFDisplay
+#### USEFDisplay
 
 ```
 {
-  "id": "ISEFDisplay",
+  "id": "USEFDisplay",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_display.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_display.json"
   },
   "attributes": {
     "version": "0.1",
@@ -167,21 +167,21 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
 }
 ```
 
-#### ISEFSingleLineInput
+#### USEFSingleLineInput
 
 ```
 {
-  "id": "ISEFSingleLineInput",
+  "id": "USEFSingleLineInput",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_single_line_input.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_line_input.json"
   },
   "attributes": {
     "version": "0.1",
@@ -191,21 +191,21 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
 }
 ```
 
-#### ISEFMultiLineInput
+#### USEFMultiLineInput
 
 ```
 {
-  "id": "ISEFMultiLineInput",
+  "id": "USEFMultiLineInput",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_multi_line_input.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_line_input.json"
   },
   "attributes": {
     "version": "0.1"
@@ -214,21 +214,21 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
 }
 ```
 
-#### ISEFSingleChoice
+#### USEFSingleChoice
 
 ```
 {
-  "id": "ISEFSingleChoice",
+  "id": "USEFSingleChoice",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_single_choice.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_choice.json"
   },
   "attributes": {
     "version": "0.1",
@@ -240,21 +240,21 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
 }
 ```
 
-#### ISEFMultiChoice
+#### USEFMultiChoice
 
 ```
 {
-  "id": "ISEFMultiChoice",
+  "id": "USEFMultiChoice",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_multi_choice.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_choice.json"
   },
   "attributes": {
     "version": "0.1",
@@ -266,21 +266,21 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
 }
 ```
 
-#### ISEFHidden
+#### USEFHidden
 
 ```
 {
-  "id": "ISEFSingleChoice",
+  "id": "USEFSingleChoice",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_hidden.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_hidden.json"
   },
   "attributes": {
     "version": "0.1",
@@ -291,7 +291,7 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
@@ -299,14 +299,14 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 ```
 
 
-#### ISEFSingleChoiceGrid
+#### USEFSingleChoiceGrid
 
 ```
 {
-  "id": "ISEFSingleChoiceGrid",
+  "id": "USEFSingleChoiceGrid",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_single_choice_grid.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_choice_grid.json"
   },
   "attributes": {
     "version": "0.1",
@@ -319,21 +319,21 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
 }
 ```
 
-#### ISEFMultiChoiceGrid
+#### USEFMultiChoiceGrid
 
 ```
 {
-  "id": "ISEFMultiChoiceGrid",
+  "id": "USEFMultiChoiceGrid",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/isef/specification/questions/isef_multi_choice_grid.json"
+    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_choice_grid.json"
   },
   "attributes": {
     "version": "0.1",
@@ -346,7 +346,7 @@ The ``ISEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "parent": {
       "data": {
         "type": "Question",
-        "id": "ISEFQuestion"
+        "id": "USEFQuestion"
       }
     }
   }
@@ -365,4 +365,4 @@ The ``Study`` groups a set of ``Pages`` into a cohesive whole. The ordering of `
 
 The ``Transition`` represents the link between two ``Pages``, the source ``Page`` the participant views first and the target ``Page`` the participant transitions to after completing the source ``Page``'s ``Questions``.
 
-A ``Page`` can have multiple ``Transitions``, provided that the ``Transitions`` have conditions specified on them. In its initial version the ISEF only supports a single condition type, namely ``Transitions`` conditional on responses provided by participants to previous ``Questions``.
+A ``Page`` can have multiple ``Transitions``, provided that the ``Transitions`` have conditions specified on them. In its initial version the USEF only supports a single condition type, namely ``Transitions`` conditional on responses provided by participants to previous ``Questions``.

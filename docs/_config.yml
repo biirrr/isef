@@ -13,12 +13,12 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: IIR Study Exchange Format
+title: User Study Exchange Format
 email: mark.hall@work.room3b.eu
 description: >- # this means to ignore newlines until "baseurl:"
-  The ISEF is a data-exchange format design to support exchanging parts of or
-  complete IIR (Interactive Information Retrieval) studies.
-baseurl: "/isef" # the subpath of your site, e.g. /blog
+  The USEF is a data-exchange format design to support exchanging parts of or
+  complete User studies.
+baseurl: "/usef" # the subpath of your site, e.g. /blog
 url: "https://biirrr.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: hallicek
 github_username:  biirrr
