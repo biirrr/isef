@@ -18,7 +18,7 @@ It defines both the core data-types to be used and generic instances for some of
 
 # Conventions
 
-The key words “**MUST**”, “**MUST** NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+The key words “**MUST**”, “**MUST NOT**”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
 
 # Core and Optional
 
@@ -34,18 +34,16 @@ The USEF consists of one core and four optional data-types. The ``Question`` is 
 
 ## Question
 
-The ``Question`` is the primary building block of the USEF and the only data-type that is core and **MUST** thus be implemented by all conforming implementations. The ``Question`` is used to represent both generic questions (single input, multiple choice, ...), where the researcher using the ``Question`` must provide further details before it can be shown to study participants, and also specific questions (gender, age, education, ...) that can be re-used as they are.
+The ``Question`` is the primary building block of the USEF and the only data-type that is core and **MUST** be implemented by all conforming implementations. The ``Question`` is used to represent both generic questions (single input, multiple choice, ...), where the researcher using the ``Question`` must provide further details before it can be shown to study participants, and also specific questions (gender, age, education, ...) that can be re-used as they are.
 
 The ``Question`` object **MUST** have the following members:
 
 * ``id``: The identifier of the ``Question``, which must be unique with regards to all ``Questions`` in the document.
 * ``type``: ``"Question"``.
-* ``links``: A single [links object](#links)
+* ``links``: A single [links object](#links).
 * ``attributes``: A single [question attributes object](#question-attributes).
-
-The ``Question`` object **MAY** also have the following member:
-
-* ``relationships``: A single [question relationships object](#question-relationships).
+* ``relationships``: A single [question relationships object](#question-relationships) (the only exception is the core
+  [USEFQuestion](#USEFquestion), which does not have any relationships).
 
 The ``Question`` implements an inheritance hierarchy, which includes a set of 9 [standard questions](#standard_questions) that **MUST** be implemented. The inheritance is important for the [question attributes object](#question-attributes), as attributes are inherited from all ancestor ``Questions``.
 
@@ -53,13 +51,12 @@ An example question would look like this:
 
 ```
 {
-  "id": "Age"
+  "id": "AgeQuestion"
   "type": "Question",
   "links": {
-    "self": "https://example.org/my-study#gender"
+    "self": "https://example.org/my-study/questions/gender"
   },
   "attributes": {
-    "name": "age",
     "title": "Please select your age band:"
     "answers": [
       "1",
@@ -80,7 +77,8 @@ An example question would look like this:
       "56 - 65",
       "66 - 75",
       "> 75"
-    ]
+    ],
+    "version": "1.0.0"
   },
   "relationships": {
     "parent": {
@@ -96,11 +94,12 @@ An example question would look like this:
 
 ### Question Attributes
 
-The question attributes object **MUST** contain the following keys:
+The question attributes object **MUST** contain the following key:
 
 * ``version``: A [semantic version number](https://semver.org/).
 
-The values for each key in the question attributes **MUST** fall into one of the following five categories:
+Additionally it **MAY** contain all the attributes that define the question to be shown to the participant. The values
+for each question attributes **MUST** be drawn from one of the following five categories:
 
 * ``null``: This key **MUST** be ignored by conforming implementations.
 * ``{user:singleValue}``: The value for this attribute **MUST** be acquired from the user setting up a study.
@@ -110,7 +109,7 @@ The values for each key in the question attributes **MUST** fall into one of the
 
 ### Question Relationships
 
-The question relationships object **MAY** contain the following key:
+The question relationships object **MUST** contain the following key:
 
 * ``parent``: A resource linkage object [as specified in JSON:API](https://jsonapi.org/format/#document-resource-object-linkage). This **MUST** include the ``data`` key to identify the linked object in the included [resource objects](https://jsonapi.org/format/#document-resource-objects). The type of the linked object **MUST** be another ``Question``. If a ``parent`` ``Question`` is provided, then any properties and relationships specified in the parent ``Question`` are inherited, but **MAY** be overriden by specifying that attribute. The exception is the ``version`` key, which **MUST** be provided for each ``Question``.
 
@@ -130,7 +129,12 @@ The USEF provides the following eight base questions which **MUST** be supported
 
 #### USEFQuestion
 
-The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Questions`` **MUST** inherit.
+The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Questions`` **MUST** inherit. It has three
+attributes:
+
+* ``title``: The title displayed to study participants.
+* ``required``: Whether a response to the question is required or not. The value **MUST** be one of ``True`` or
+  ``False``.
 
 ```
 {
@@ -140,14 +144,25 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_question.json"
   },
   "attributes": {
-    "version": "0.1",
-    "name": "{user:singleValue}",
-    "title": "{user:singleValue}"
+    "version": "0.1.0",
+    "title": "{user:singleValue}",
+    "required": "{user:singleValue}"
   }
 }
 ```
 
 #### USEFDisplay
+
+The ``USEFDisplay`` is a question that is used to display information to the study participants without requiring
+them to provide any response. It has four attributes:
+
+* ``title``: Overrides the parent [USEFQuestion](#USEFQuestion), setting it to ``null`` as all information to display
+  to the participant **MUST** be in the ``content`` attribute.
+* ``required``: Overrides the parent [USEFQuestion](#USEFQuestion), setting it to ``null`` as this question does not
+  generate any response.
+* ``content``: The content to show to the participant.
+* ``format``: The format to use for interpreting the ``content``. All conforming applications **MUST** support the
+  ``format``s ``text`` (interpret the ``content`` as pure text) and ``html`` (interpret the ``content`` as HTML5).
 
 ```
 {
@@ -157,9 +172,9 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_display.json"
   },
   "attributes": {
-    "version": "0.1",
-    "name": null,
+    "version": "0.1.0",
     "title": null,
+    "required": null,
     "content": "{user:multilineText}",
     "format": "{user:singleValue}"
   },
@@ -176,6 +191,11 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 #### USEFSingleLineInput
 
+The ``USEFSingleLineInput`` is a question that allows the study participant to provide a single textual response. It
+has a single attribute:
+
+* ``validation``: Validation to apply to the participant's response as a regular expression.
+
 ```
 {
   "id": "USEFSingleLineInput",
@@ -184,7 +204,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_line_input.json"
   },
   "attributes": {
-    "version": "0.1",
+    "version": "0.1.0",
     "validation": "{user:singleValue}"
   },
   "relationships": {
@@ -200,6 +220,9 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 #### USEFMultiLineInput
 
+The ``USEFMultiLineInput`` is a question that allows the study participant to provide a multi-line textual response.
+It has no additional attributes.
+
 ```
 {
   "id": "USEFMultiLineInput",
@@ -208,7 +231,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_line_input.json"
   },
   "attributes": {
-    "version": "0.1"
+    "version": "0.1.0"
   },
   "relationships": {
     "parent": {
@@ -223,6 +246,17 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 #### USEFSingleChoice
 
+The ``USEFSingleChoice`` is a question that allows the study participant to select a response from a selection of
+pre-defined responses. It has three attributes:
+
+* ``values``: The list of values that the participant can select from.
+* ``labels``: The list of labels to show for the values. If no ``labels`` are provided, then the ``values`` are directly
+  showed to the participants.
+* ``display``: How to display the ``values`` / ``labels``, **MUST** be one of ``dropdown`` (display as a drop-down
+  selection where only the selected value is visible), ``vertical list`` (display as a vertical list to select from,
+  where all values are visible), or ``horizontal list`` (display as a horizontal list to select from, where all values
+  are visible).
+
 ```
 {
   "id": "USEFSingleChoice",
@@ -231,7 +265,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_choice.json"
   },
   "attributes": {
-    "version": "0.1",
+    "version": "0.1.0",
     "values": "{user:multipleValue}",
     "labels": "{user:multipleValues}",
     "display": "{user:singleValue}"
@@ -249,6 +283,17 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 #### USEFMultiChoice
 
+The ``USEFMultiChoice`` is a question that allows the study participant to select one or more responses from a
+selection of pre-defined responses. It has three attributes:
+
+* ``values``: The list of values that the participant can select from.
+* ``labels``: The list of labels to show for the values. If no ``labels`` are provided, then the ``values`` are shown
+  to the participants.
+* ``display``: How to display the ``values`` / ``labels``, **MUST** be one of ``multiselect`` (display as a list
+  selection where only a sub-set of the values is visible), ``vertical list`` (display as a vertical list to select
+  from, where all values are visible), or ``horizontal list`` (display as a horizontal list to select from, where all
+  values are visible).
+
 ```
 {
   "id": "USEFMultiChoice",
@@ -257,7 +302,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_choice.json"
   },
   "attributes": {
-    "version": "0.1",
+    "version": "0.1.0",
     "values": "{user:multipleValues}",
     "labels": "{user:multipleValues}",
     "display": "{user:singleValue}"
@@ -275,6 +320,10 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 #### USEFHidden
 
+The ``USEFHidden`` is a question that represents a hidden response. It has the following attribute:
+
+* ``value``: The value to use as the hidden response
+
 ```
 {
   "id": "USEFSingleChoice",
@@ -283,7 +332,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_hidden.json"
   },
   "attributes": {
-    "version": "0.1",
+    "version": "0.1.0",
     "title": null,
     "value": "{user:singleValue}"
   },
@@ -298,8 +347,18 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 }
 ```
 
-
 #### USEFSingleChoiceGrid
+
+The ``USEFSingleChoiceGrid`` is a question that shows the participants a number of rows and for each row the participant
+can select one response from a selection of pre-defined responses. All rows share the same set of pre-defined responses.
+It has the following four attributes:
+
+* ``column_values``: The list of values that the participant can select from.
+* ``column_labels``: The list of labels to show for the values. If no ``column_labels`` are provided, then the
+  ``column_values`` are shown to the participants.
+* ``row_values``: The list of unique values identifying each row.
+* ``row_labels``: The list of labels to show for each row. If no ``row_labels`` are provided, then the ``row_values``
+  are shown to the participants.
 
 ```
 {
@@ -309,7 +368,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_choice_grid.json"
   },
   "attributes": {
-    "version": "0.1",
+    "version": "0.1.0",
     "column_values": "{user:multipleValues}",
     "column_labels": "{user:multipleValues}",
     "row_values": "{user:multipleValues}",
@@ -328,6 +387,17 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 #### USEFMultiChoiceGrid
 
+The ``USEFMultiChoiceGrid`` is a question that shows the participants a number of rows and for each row the participant
+can select one or more responses from a selection of pre-defined responses. All rows share the same set of pre-defined
+responses. It has the following four attributes:
+
+* ``column_values``: The list of values that the participant can select from.
+* ``column_labels``: The list of labels to show for the values. If no ``column_labels`` are provided, then the
+  ``column_values`` are shown to the participants.
+* ``row_values``: The list of unique values identifying each row.
+* ``row_labels``: The list of labels to show for each row. If no ``row_labels`` are provided, then the ``row_values``
+  are shown to the participants.
+
 ```
 {
   "id": "USEFMultiChoiceGrid",
@@ -336,7 +406,7 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
     "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_choice_grid.json"
   },
   "attributes": {
-    "version": "0.1",
+    "version": "0.1.0",
     "column_values": "{user:multipleValues}",
     "column_labels": "{user:multipleValues}",
     "row_values": "{user:multipleValues}",
@@ -355,14 +425,199 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 
 ## Page
 
-A ``Page`` is an ordered collection of ``Questions``, which together form a cohesive unit in the study. These might be a set of questions that together acquire descriptive demographics about participants, but they also might be something more focused, such as a single instrument.
+A ``Page`` is an ordered collection of ``Questions``, which together form a cohesive unit in the study. These might be
+a set of questions that together acquire descriptive demographics about participants, but they also might be something
+more focused, such as a single instrument. ``Questions`` in the ``Page`` **MUST** be displayed in the order specified
+in the ``questions`` relationship.
+
+The ``Page`` object **MUST** have the following members:
+
+* ``id``: The identifier of the ``Page``, which must be unique with regards to all ``Pages`` in the document.
+* ``type``: ``"Page"``.
+* ``links``: A single [links object](#links).
+* ``attributes``: A single [page attributes object](#page-attributes).
+* ``relationships``: A single [page relationships object](#page-relationships).
+
+An example ``Page`` would look like this:
+
+```
+{
+  "id": "Background",
+  "type": "Page",
+  "links": {
+    "self": "https://example.org/my-study/pages/background"
+  },
+  "attributes": {
+    "title": "About you"
+  },
+  "relationships": {
+    "questions": [
+      {
+        "data": {
+          "type": "Question",
+          "id": "AgeQuestion"
+        }
+      },
+      {
+        "data": {
+          "type": "Question",
+          "id": "GenderQuestion"
+        }
+      }
+    ]
+  }
+}
+```
+### Page Attributes
+
+The page attributes object **MUST** contain the following key:
+
+* ``title``: The ``title`` to show to participants.
+
+### Page Relationships
+
+The page relationships object **MUST** contain the following key:
+
+* ``questions``: An ordered lists of [Questions](#Question) that belong to the ``Page`` and **MUST** be displayed in the
+  order specified here.
+
+The page relationships object **MAY** contain the following key:
+
+* ``transitions``: An ordered list of [Transitions](#Transition) that are to be used to determine the next ``Page`` to
+  show to the participant. If multiple ``Transition``s are provided, then all but the last one **MUST** have conditions
+  specified. To determine which ``Transition`` to follow, the ``Transition``s are evaluated in the order specified in
+  this relationship.
 
 ## Study
 
-The ``Study`` groups a set of ``Pages`` into a cohesive whole. The ordering of ``Pages`` in the ``Study`` **MUST** be used as the ordering when displaying the ``Pages`` to participants, except if ``Transitions`` are also provided, in which case those should be used.
+The ``Study`` groups a set of ``Pages`` into a cohesive whole. The ordering of ``Pages`` in the ``Study`` **MUST** be
+used as the ordering when displaying the ``Pages`` to participants, except if ``Transitions`` are also provided, in
+which case those **MUST** be used.
+
+The ``Study`` object **MUST** have the following members:
+
+* ``id``: The identifier of the ``Study``.
+* ``type``: ``"Study"``.
+* ``links``: A single [links object](#links).
+* ``attributes``: A single [study attributes object](#study-attributes).
+* ``relationships``: A single [study relationships object](#study-relationships).
+
+An example ``Study`` would look like this:
+
+```
+{
+  "id": "SampleStudy",
+  "type": "Study",
+  "links": {
+    "self": "https://example.org/my-study"
+  },
+  "attributes": {
+    "title": "My Study",
+    "description": "An example study"
+  },
+  "relationships": {
+    "pages": [
+      {
+        "data": {
+          "type": "Page",
+          "id": "Welcome"
+        }
+      },
+      {
+        "data": {
+          "type": "Page",
+          "id": "Background"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Study Attributes
+
+The study attributes object **MUST** contain the following key:
+
+* ``title``: The ``title`` to show to participants.
+
+### Study Relationships
+
+The page relationships object **MUST** contain the following key:
+
+* ``questions``: An ordered lists of [Pages](#Page) that belong to the ``Study`` and **MUST** be displayed in the
+  order specified here. The exception is if [Transitions](#Transition) are provided, then any ``Transition``s specified
+  on an individual ``Page`` override the order specified here. If there are no ``Transitions`` for a ``Page`` or all
+  ``Transitions`` specified for a ``Page`` have conditions that do not hold, then the next ``Page`` to display **MUST**
+  be determined by the order of this attribute.
 
 ## Transition
 
 The ``Transition`` represents the link between two ``Pages``, the source ``Page`` the participant views first and the target ``Page`` the participant transitions to after completing the source ``Page``'s ``Questions``.
 
 A ``Page`` can have multiple ``Transitions``, provided that the ``Transitions`` have conditions specified on them. In its initial version the USEF only supports a single condition type, namely ``Transitions`` conditional on responses provided by participants to previous ``Questions``.
+
+The ``Transition`` object **MUST** have the following members:
+
+* ``id``: The identifier of the ``Transition``.
+* ``type``: ``"Study"``.
+* ``links``: A single [links object](#links).
+* ``attributes``: A single [transition attributes object](#transition-attributes).
+* ``relationships``: A single [transition relationships object](#transition-relationships).
+
+An example ``Transition`` would look like this:
+
+```
+{
+  "id": "NoConsentTransition",
+  "type": "Transition",
+  "link": {
+    "self": "https://example.org/my-study/pages/Welcome/NoConsentTransition"
+  },
+  "attributes": {
+    "condition": {
+      "type": "response",
+      "page": "Welcome",
+      "question": ""
+    }
+  },
+  "relationships": {
+
+  }
+}
+```
+
+### Transition Attributes
+
+The transition attributes object **MAY** contain the following key:
+
+* ``condition``: A [Condition](#Condition) object.
+
+#### Condition
+
+The condition object **MUST** contain the following key:
+
+* ``type``: The type of condition. **MUST** be "response".
+
+Which other keys **MUST** be specified depends on the ``type`` attribute.
+
+##### Condition Type ``"response"``
+
+The ``"response"`` condition defines a conditional transition based on the participant's response to a question. It
+**MUST** contain the following keys:
+
+* ``page``: The unique identifier of the ``Page`` that the response was recorded from.
+* ``question``: The unique identifier of the ``Question`` that the response was recorded for.
+* ``value``: The value to compare the response to.
+* ``comparison``: The comparison operator **MUST** be one of ``"=="`` (the condition holds if the response is equal to
+  the ``value``) or ``"!="`` (the condition holds if the response is not equal to the ``value``).
+
+The response **MAY** also contain the following key **IF** the ``Question`` is a ``USEFSingleChoiceGrid``
+or ``USEFMultiChoiceGrid``:
+
+* ``row``: The value from the ``row_values`` attribute that the response was recorded for.
+
+### Transition Relationships
+
+The transition relationships object **MUST** contain the following key:
+
+* ``target``: The [Page](#Page) to transition to **IF** no condition is specified or if the condition holds.
