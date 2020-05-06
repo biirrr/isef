@@ -44,3 +44,9 @@ whitelist:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+# Minima configuration
+header_pages:
+  - specification/v0_2_0.md
+  - questions/index.md
+  - about.md
