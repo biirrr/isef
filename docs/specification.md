@@ -1,12 +1,15 @@
 ---
 layout: page
-title: Latest Specification (0.1.0-alpha)
-permalink: /specification/
+title: Latest Specification (0.2.0-alpha)
+permalink: /specification/v0_2_0
+redirect_from:
+  - /specification
+  - /specification/latest
 ---
 
 # Status
 
-This page presents the latest published version of USEF, which currently is **0.1.0-alpha**. The specification uses [semantic versioning](https://semver.org/) to clearly signal any breaking changes. The specification is still in an early alpha stage and is likely to change before the initial 1.0 release.
+This page presents the latest published version of USEF, which currently is **0.2.0-alpha**. The specification uses [semantic versioning](https://semver.org/) to clearly signal any breaking changes. The specification is still in an early alpha stage and is likely to change before the initial 1.0 release.
 
 If you catch an error in the specification’s text, or if you want to contribute to evolving the specification, or if you write an implementation, please let us know by opening an issue or pull request at our [GitHub repository](https://github.com/biirrr/USEF).
 
@@ -99,13 +102,27 @@ The question attributes object **MUST** contain the following key:
 * ``version``: A [semantic version number](https://semver.org/).
 
 Additionally it **MAY** contain all the attributes that define the question to be shown to the participant. The values
-for each question attributes **MUST** be drawn from one of the following five categories:
+for each question attributes **MUST** be drawn from one of the following three categories:
 
 * ``null``: This key **MUST** be ignored by conforming implementations.
-* ``{user:singleValue}``: The value for this attribute **MUST** be acquired from the user setting up a study.
-* ``{user:multipleValues}``: The list of values for this attribute **MUST** be acquired from the user setting up a study.
-* ``{user:multilineText}``: The multi-line text value for this attribute **MUST** be acquired from the user setting up a study.
-* other values: To be treated as a constant value that **MUST** be used as specified.
+* an object: This key **MUST** be interpreted as listed below
+* other value: To be treated as a constant value that **MUST** be used as provided.
+
+#### Question Attribute Object
+
+The Question Attribute Object defines how the attribute value is to be acquired. It **MUST** contain the following keys:
+
+* ``source``: The source to acquire the attribute value from. It **MUST** be set to ``"user"``.
+* ``type``: The type of value to be acquired. It **MUST** be one of
+
+  * ``"singleValue"``: A single value to be acquired from the user.
+  * ``"multiLineTextValue"``: A single value to be acquired from the user using a multi-line textbox.
+  * ``"booleanValue"``: A boolean value to be acquired from the user.
+  * ``"listOfValues"``: A list of values to be acquired from the user.
+
+Additionally it **MAY** contain any of the following keys:
+
+* ``allowed``: A list of values that are allowed for this attribute.
 
 ### Question Relationships
 
@@ -133,20 +150,26 @@ The ``USEFQuestion`` is the root ``Question`` type, from which all other ``Quest
 attributes:
 
 * ``title``: The title displayed to study participants.
-* ``required``: Whether a response to the question is required or not. The value **MUST** be one of ``True`` or
-  ``False``.
+* ``required``: Whether a response to the question is required or not. The value **MUST** be one of ``true`` or
+  ``false``.
 
 ```
 {
   "id": "USEFQuestion",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_question.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFQuestion/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
-    "title": "{user:singleValue}",
-    "required": "{user:singleValue}"
+    "version": "0.2.0",
+    "title": {
+      "source": "user",
+      "type": "singleValue"
+    },
+    "required":{
+      "source": "user",
+      "type": "booleanValue"
+    }
   }
 }
 ```
@@ -162,21 +185,27 @@ them to provide any response. It has four attributes:
   generate any response.
 * ``content``: The content to show to the participant.
 * ``format``: The format to use for interpreting the ``content``. All conforming applications **MUST** support the
-  ``format``s ``text`` (interpret the ``content`` as pure text) and ``html`` (interpret the ``content`` as HTML5).
+  ``format``s ``text/text`` (interpret the ``content`` as pure text) and ``text/html`` (interpret the ``content`` as HTML5).
 
 ```
 {
   "id": "USEFDisplay",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_display.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFDisplay/0.2.0.json"
   },
   "attributes": {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "title": null,
     "required": null,
-    "content": "{user:multilineText}",
-    "format": "{user:singleValue}"
+    "content": {
+      "source": "user",
+      "type": "muliLineTextValue"
+    },
+    "format": {
+      "source": "user",
+      "type": "singleValue"
+    }
   },
   "relationships": {
     "parent": {
@@ -201,11 +230,14 @@ has a single attribute:
   "id": "USEFSingleLineInput",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_line_input.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFSingleLineInput/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
-    "validation": "{user:singleValue}"
+    "version": "0.2.0",
+    "validation": {
+      "source": "user",
+      "type": "singleValue"
+    }
   },
   "relationships": {
     "parent": {
@@ -228,10 +260,10 @@ It has no additional attributes.
   "id": "USEFMultiLineInput",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_line_input.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFMultiLineInput/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "relationships": {
     "parent": {
@@ -262,13 +294,23 @@ pre-defined responses. It has three attributes:
   "id": "USEFSingleChoice",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_choice.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFSingleChoice/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
-    "values": "{user:multipleValue}",
-    "labels": "{user:multipleValues}",
-    "display": "{user:singleValue}"
+    "version": "0.2.0",
+    "values": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "labels": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "display": {
+      "source": "user",
+      "type": "singleValue",
+      "allowed": ["dropdown", "vertical list", "horizontal list"]
+    }
   },
   "relationships": {
     "parent": {
@@ -299,13 +341,23 @@ selection of pre-defined responses. It has three attributes:
   "id": "USEFMultiChoice",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_choice.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFMultiChoice/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
-    "values": "{user:multipleValues}",
-    "labels": "{user:multipleValues}",
-    "display": "{user:singleValue}"
+    "version": "0.2.0",
+    "values": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "labels": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "display": {
+      "source": "user",
+      "type": "singleValue",
+      "allowed": ["multiselect", "vertical list", "horizontal list"]
+    }
   },
   "relationships": {
     "parent": {
@@ -326,15 +378,18 @@ The ``USEFHidden`` is a question that represents a hidden response. It has the f
 
 ```
 {
-  "id": "USEFSingleChoice",
+  "id": "USEFHidden",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_hidden.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFHidden/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "title": null,
-    "value": "{user:singleValue}"
+    "value": {
+      "source": "user",
+      "type": "singleValue"
+    }
   },
   "relationships": {
     "parent": {
@@ -365,14 +420,26 @@ It has the following four attributes:
   "id": "USEFSingleChoiceGrid",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_single_choice_grid.json"
+    "self": "https://biirrr.github.io/usef/specification/questions/USEFSingleChoiceGrid/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
-    "column_values": "{user:multipleValues}",
-    "column_labels": "{user:multipleValues}",
-    "row_values": "{user:multipleValues}",
-    "row_labels": "{user:multipleValues}"
+    "version": "0.2.0",
+    "column_values": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "column_labels": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "row_values": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "row_labels": {
+      "source": "user",
+      "type": "listOfValues"
+    }
   },
   "relationships": {
     "parent": {
@@ -403,14 +470,26 @@ responses. It has the following four attributes:
   "id": "USEFMultiChoiceGrid",
   "type": "Question",
   "links": {
-    "self": "https://biirrr.github.io/USEF/specification/questions/USEF_multi_choice_grid.json"
+    "self": "https://biirrr.github.io/usef/specification/USEFMultiChoiceGrid/v0_2_0.json"
   },
   "attributes": {
-    "version": "0.1.0",
-    "column_values": "{user:multipleValues}",
-    "column_labels": "{user:multipleValues}",
-    "row_values": "{user:multipleValues}",
-    "row_labels": "{user:multipleValues}"
+    "version": "0.2.0",
+    "column_values": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "column_labels": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "row_values": {
+      "source": "user",
+      "type": "listOfValues"
+    },
+    "row_labels": {
+      "source": "user",
+      "type": "listOfValues"
+    }
   },
   "relationships": {
     "parent": {
