@@ -1,6 +1,6 @@
 ---
 layout: page
-title: USEFQuestion
+title: USEFMultiChoice
 ---
 
 The latest version is always available [here](latest.json).

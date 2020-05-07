@@ -1,0 +1,57 @@
+{
+    "data": {
+        "id": "USEFMultiChoiceGrid",
+        "type": "Question",
+        "links": {
+            "self": "https://biirrr.github.io/usef/USEFMultiChoiceGrid/v0_2_0.json"
+        },
+        "attributes": {
+            "version": "0.2.0",
+            "column_values": {
+                "source": "user",
+                "type": "listOfValues"
+            },
+            "column_labels": {
+                "source": "user",
+                "type": "listOfValues"
+            },
+            "row_values": {
+                "source": "user",
+                "type": "listOfValues"
+            },
+            "row_labels": {
+                "source": "user",
+                "type": "listOfValues"
+            }
+        },
+        "relationships": {
+            "parent": {
+                "data": {
+                    "type": "Question",
+                    "id": "USEFQuestion"
+                }
+            }
+        }
+    },
+    "included": [
+        {
+            "id": "USEFQuestion",
+            "type": "Question",
+            "links": {
+                "self": "https://biirrr.github.io/USEF/specification/questions/USEFQuestion/v0_2_0.json"
+            },
+            "attributes": {
+                "version": "0.2.0",
+                "title": {
+                    "source": "user",
+                    "type": "singleValue"
+                },
+                "required":{
+                    "source": "user",
+                    "type": "booleanValue"
+                }
+            }
+        }
+
+    ]
+}

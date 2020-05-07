@@ -1,0 +1,46 @@
+{
+    "data": {
+        "id": "USEFHidden",
+        "type": "Question",
+        "links": {
+            "self": "https://biirrr.github.io/usef/questions/USEFHidden/v0_2_0.json"
+        },
+        "attributes": {
+            "version": "0.2.0",
+            "title": null,
+            "value": {
+                "source": "user",
+                "type": "singleValue"
+            }
+        },
+        "relationships": {
+            "parent": {
+                "data": {
+                    "type": "Question",
+                    "id": "USEFQuestion"
+                }
+            }
+        }
+    },
+    "included": [
+        {
+            "id": "USEFQuestion",
+            "type": "Question",
+            "links": {
+                "self": "https://biirrr.github.io/USEF/specification/questions/USEFQuestion/v0_2_0.json"
+            },
+            "attributes": {
+                "version": "0.2.0",
+                "title": {
+                    "source": "user",
+                    "type": "singleValue"
+                },
+                "required":{
+                    "source": "user",
+                    "type": "booleanValue"
+                }
+            }
+        }
+
+    ]
+}
