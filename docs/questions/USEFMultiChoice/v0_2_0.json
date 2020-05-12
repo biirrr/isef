@@ -35,7 +35,7 @@
             "id": "USEFQuestion",
             "type": "Question",
             "links": {
-                "self": "https://biirrr.github.io/USEF/specification/questions/USEFQuestion/v0_2_0.json"
+                "self": "https://biirrr.github.io/usef/questions/USEFQuestion/v0_2_0.json"
             },
             "attributes": {
                 "version": "0.2.0",
