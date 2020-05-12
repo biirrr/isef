@@ -3,7 +3,7 @@
         "id": "USEFMultiChoiceGrid",
         "type": "Question",
         "links": {
-            "self": "https://biirrr.github.io/usef/USEFMultiChoiceGrid/v0_2_0.json"
+            "self": "https://biirrr.github.io/usef/questions/USEFMultiChoiceGrid/v0_2_0.json"
         },
         "attributes": {
             "version": "0.2.0",

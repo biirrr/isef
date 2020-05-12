@@ -3,7 +3,7 @@
         "id": "USEFDisplay",
         "type": "Question",
         "links": {
-            "self": "https://biirrr.github.io/usef/questions/USEFDisplay/0.2.0.json"
+            "self": "https://biirrr.github.io/usef/questions/USEFDisplay/v0_2_0.json"
         },
         "attributes": {
             "version": "0.2.0",
