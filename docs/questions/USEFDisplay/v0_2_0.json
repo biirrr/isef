@@ -1,7 +1,7 @@
 {
     "data": {
         "id": "USEFDisplay",
-        "type": "Question",
+        "type": "questions",
         "links": {
             "self": "https://biirrr.github.io/usef/questions/USEFDisplay/v0_2_0.json"
         },
@@ -21,7 +21,7 @@
         "relationships": {
               "parent": {
                 "data": {
-                    "type": "Question",
+                    "type": "questions",
                     "id": "USEFQuestion"
                 }
             }
@@ -30,7 +30,7 @@
     "included": [
         {
             "id": "USEFQuestion",
-            "type": "Question",
+            "type": "questions",
             "links": {
                 "self": "https://biirrr.github.io/usef/questions/USEFQuestion/v0_2_0.json"
             },
