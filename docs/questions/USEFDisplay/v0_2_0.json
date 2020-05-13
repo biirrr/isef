@@ -11,7 +11,7 @@
             "required": null,
             "content": {
                 "source": "user",
-                "type": "muliLineTextValue"
+                "type": "multiLineTextValue"
             },
             "format": {
                 "source": "user",
