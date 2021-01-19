@@ -47,6 +47,6 @@ whitelist:
 
 # Minima configuration
 header_pages:
-  - specification/v0_2_0.md
+  - specification/v0_3_0.md
   - questions/index.md
   - about.md
